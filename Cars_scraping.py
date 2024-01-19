@@ -60,27 +60,33 @@ for result in  results:
     alls.append(all1)
 
 
-# %%
-# Converting the list of data into a pandas DataFrame
-df = pd.DataFrame(alls, columns=['Name', 'Mileage', 'Price', 'Rating', 'Rate Count', 'Dealer Name'])
-df
 
-# %% [markdown]
 # Data Cleaning
 
 # %%
-df['Rate Count'] = df['Rate Count'].apply(lambda x: x.strip('reviews)').strip('('))
+# Converting the list of data into a pandas DataFrame
+df = pd.DataFrame(alls, columns=['Name', 'Mileage', 'Price', 'Rating', 'Rating Count', 'Dealer Name'])
 
-# %% [markdown]
+# Data Cleaning
+#Extract Ratings count and convert it to integer value
+df['Rating Count']= df['Rating Count'].str.extract('(\d+)').astype(int)
+
+#Remove dollar signs and convert it to integer value
+df['Price'] = df['Price'].replace('[\$,]','',regex=True).astype('int')
+
+#Remove text and comma signs and convert it to integer value
+df['Mileage'] = df['Mileage'].apply(lambda x: x.strip('mi.)').replace(',','')).astype(int)
+
+#Convert it to integer value
+df['Rating'] = pd.to_numeric(df['Rating'],errors='coerce')
+
+
 # Stroing output in Excel
 
-# %%
 df.to_excel('single_page_car.xlsx', index=False)
 
-# %% [markdown]
 # Part-2 Pagination
 
-# %%
 name = []
 mileage = []
 dealer_name = []
